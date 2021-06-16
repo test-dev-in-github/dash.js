@@ -515,21 +515,14 @@ function TextSourceBuffer() {
         const raw = new DataView(data);
         for (let i = 0; i < samples.length; i++) {
             const sample = samples[i];
-            const cea608Ranges = cea608parser.findCea608Nalus(raw, sample.offset, sample.size);
+            const ccData = cea608parser.extractCea608DataFromSample(raw, sample.offset, sample.size);
             let lastSampleTime = null;
             let idx = 0;
-            for (let j = 0; j < cea608Ranges.length; j++) {
-                const ccData = cea608parser.extractCea608DataFromRange(raw, cea608Ranges[j]);
-                for (let k = 0; k < 2; k++) {
-                    if (ccData[k].length > 0) {
-                        if (sample.cts !== lastSampleTime) {
-                            idx = 0;
-                        } else {
-                            idx += 1;
-                        }
-                        allCcData.fields[k].push([sample.cts + (mseTimeOffset * embeddedTimescale), ccData[k], idx]);
-                        lastSampleTime = sample.cts;
-                    }
+            for (let k = 0; k < 2; k++) {
+                if (ccData[k].length > 0) {
+                    idx = (sample.cts === lastSampleTime) ? idx + 1 : 0;
+                    allCcData.fields[k].push([sample.cts + (mseTimeOffset * embeddedTimescale), ccData[k], idx]);
+                    lastSampleTime = sample.cts;
                 }
             }
         }
