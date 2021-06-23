@@ -77,6 +77,8 @@ function TextSourceBuffer() {
         embeddedTextHtmlRender,
         mseTimeOffset;
 
+    let processedChunks = new Map();
+
     function setup() {
         logger = Debug(context).getInstance().getLogger(instance);
 
@@ -148,6 +150,7 @@ function TextSourceBuffer() {
     function reset() {
         resetInitialSettings();
 
+        processedChunks.clear();
         streamController = null;
         videoModel = null;
         textTracks = null;
@@ -156,8 +159,12 @@ function TextSourceBuffer() {
     function onVideoChunkReceived(e) {
         const chunk = e.chunk;
 
-        if (chunk.mediaInfo.embeddedCaptions) {
+        const chunkId = `${chunk.streamId}_${chunk.mediaInfo.id}_${chunk.index}`;
+        if (chunk.mediaInfo.embeddedCaptions && !processedChunks.has(chunkId)) {
             append(chunk.bytes, chunk);
+            if (chunk.segmentType === 'MediaSegment') {
+                processedChunks.set(chunkId, { start: chunk.start, end: chunk.end });
+            }
         }
     }
 
@@ -583,6 +590,16 @@ function TextSourceBuffer() {
             const trackIdx = textTracks.getTrackIdxForId(track.id);
             if (trackIdx >= 0) {
                 textTracks.deleteCuesFromTrackIdx(trackIdx, e.from, e.to);
+                Array.from(processedChunks.entries())
+                    .filter((entry) => {
+                        const start = entry[1].start;
+                        const end = entry[1].end;
+                        return Math.max(start, e.from) < Math.min(end, e.to);
+                    })
+                    .forEach((entry) => {
+                        const key = entry[0];
+                        processedChunks.delete(key);
+                    });
             }
         });
     }
