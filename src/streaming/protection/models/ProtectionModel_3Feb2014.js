@@ -243,6 +243,7 @@ function ProtectionModel_3Feb2014(config) {
             // For clearkey, message is a ClearKeyKeySet
             session.update(new Uint8Array(message.toJWK()));
         }
+        eventBus.trigger(events.KEY_SESSION_UPDATED);
     }
 
     /**
@@ -339,7 +340,7 @@ function ProtectionModel_3Feb2014(config) {
                 switch (event.type) {
                     case api.error:
                         let errorStr = 'KeyError'; // TODO: Make better string from event
-                        eventBus.trigger(events.KEY_ERROR, { data: new DashJSError(ProtectionErrors.MEDIA_KEYERR_CODE, errorStr, this) });
+                        eventBus.trigger(events.KEY_ERROR, { error: new DashJSError(ProtectionErrors.MEDIA_KEYERR_CODE, errorStr, this) });
                         break;
                     case api.message:
                         let message = ArrayBuffer.isView(event.message) ? event.message.buffer : event.message;
