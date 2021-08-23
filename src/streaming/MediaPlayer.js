@@ -1189,13 +1189,11 @@ function MediaPlayer() {
      * @instance
      */
     function enableForcedTextStreaming(enable) {
-        const activeStreamInfo = streamController.getActiveStreamInfo();
-
-        if (!activeStreamInfo || !textController) {
+        if (!textController) {
             return false;
         }
 
-        return textController.enableForcedTextStreaming(activeStreamInfo.id, enable);
+        return textController.enableForcedTextStreaming(enable);
     }
 
     /**
