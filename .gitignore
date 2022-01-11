@@ -187,3 +187,5 @@ build/typings/
 
 # Vim
 .vimrc
+
+dashjs-*-doris.*.tgz
