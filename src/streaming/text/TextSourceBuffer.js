@@ -56,6 +56,7 @@ function TextSourceBuffer(config) {
     const context = this.context;
     const eventBus = EventBus(context).getInstance();
     let embeddedInitialized = false;
+    let processedChunks = new Map();
 
     let instance,
         logger,
@@ -172,9 +173,13 @@ function TextSourceBuffer(config) {
 
     function _onVideoChunkReceived(e) {
         const chunk = e.chunk;
+        const chunkId = `${chunk.streamId}_${chunk.mediaInfo.id}_${chunk.index}`;
 
-        if (chunk.mediaInfo.embeddedCaptions) {
+         if (chunk.mediaInfo.embeddedCaptions && !processedChunks.has(chunkId)) {
             append(chunk.bytes, chunk);
+            if (chunk.segmentType === 'MediaSegment') {
+                processedChunks.set(chunkId, { start: chunk.start, end: chunk.end });
+            }
         }
     }
 
@@ -584,6 +589,16 @@ function TextSourceBuffer(config) {
             const trackIdx = textTracks.getTrackIdxForId(track.id);
             if (trackIdx >= 0) {
                 textTracks.deleteCuesFromTrackIdx(trackIdx, e.from, e.to);
+                Array.from(processedChunks.entries())
+                    .filter((entry) => {
+                        const start = entry[1].start;
+                        const end = entry[1].end;
+                        return Math.max(start, e.from) < Math.min(end, e.to);
+                    })
+                    .forEach((entry) => {
+                        const key = entry[0];
+                        processedChunks.delete(key);
+                    });
             }
         });
     }
