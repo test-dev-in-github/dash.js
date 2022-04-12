@@ -373,7 +373,7 @@ function ProtectionController(config) {
             if (version > 0) {
                 const keyIdCount = dataView.getUint32(28);
                 const bytesToRemove = 4 + keyIdCount * 16;
-                const newSize = initDataArray.byteLength - bytesToRemove;
+                const newSize = initData.byteLength - bytesToRemove;
 
                 // Set new size without key IDs
                 dataView.setUint32(0, newSize);
