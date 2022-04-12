@@ -525,6 +525,8 @@ import {HTTPRequest} from '../streaming/vo/metrics/HTTPRequest';
  * If true, the ProtectionController and then created MediaKeys and MediaKeySessions will be preserved during the MediaPlayer lifetime.
  * @property {boolean} ignoreEmeEncryptedEvent
  * If set to true the player will ignore "encrypted" and "needkey" events thrown by the EME.
+ * @property {boolean} downgradePlayReadyPSSH
+ * If set to true the player will downgrade v1 PSSH boxes to v0.
  */
 
 /**
@@ -778,7 +780,8 @@ function Settings() {
             },
             protection: {
                 keepProtectionMediaKeys: false,
-                ignoreEmeEncryptedEvent: false
+                ignoreEmeEncryptedEvent: false,
+                downgradePlayReadyPSSH: false
             },
             buffer: {
                 enableSeekDecorrelationFix: false,
