@@ -100,11 +100,31 @@ function Capabilities() {
             return Promise.resolve(true);
         }
 
+        if (_isSupportedCodec(config)) {
+            return Promise.resolve(true);
+        }
+
         if (_canUseMediaCapabilitiesApi(config, type)) {
             return _checkCodecWithMediaCapabilities(config, type);
         }
 
         return _checkCodecWithMse(config);
+    }
+
+    /**
+     * Indicates, whether the given codec is whitelisted as a supported codec in the config.
+     * @param {object} config
+     * @returns {boolean}
+     */
+    function _isSupportedCodec(config) {
+        // Example:
+        // 'video/mp4; codecs="avc1.640029"'
+        function formatCodec(codec) {
+            return codec.split(' ').join('').toLowerCase();
+        }
+        return settings.get().streaming.capabilities.supportedCodecs.some((codec) => {
+            return formatCodec(codec) === formatCodec(config.codec);
+        });
     }
 
     /**
