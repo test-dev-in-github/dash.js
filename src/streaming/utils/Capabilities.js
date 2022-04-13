@@ -117,7 +117,12 @@ function Capabilities() {
      * @returns {boolean}
      */
     function _isSupportedCodec(config) {
-        return settings.get().streaming.capabilities.supportedCodecs.indexOf(config.codec) !== -1;
+        function formatCodec(codec) {
+            return codec.split(' ').join('').toLowerCase();
+        }
+        return settings.get().streaming.capabilities.supportedCodecs.some((codec) => {
+            return formatCodec(codec) === formatCodec(config.codec);
+        });
     }
 
     /**
