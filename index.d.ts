@@ -158,7 +158,8 @@ declare namespace dashjs {
             eventControllerRefreshDelay?: number,
             capabilities?: {
                 filterUnsupportedEssentialProperties?: boolean,
-                useMediaCapabilitiesApi?: boolean
+                useMediaCapabilitiesApi?: boolean,
+                supportedCodecs?: string[]
             },
             timeShiftBuffer?: {
                 calcFromSegmentTimeline?: boolean

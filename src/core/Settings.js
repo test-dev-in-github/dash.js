@@ -66,7 +66,8 @@ import {HTTPRequest} from '../streaming/vo/metrics/HTTPRequest';
  *            eventControllerRefreshDelay: 100,
  *            capabilities: {
  *               filterUnsupportedEssentialProperties: true,
- *               useMediaCapabilitiesApi: false
+ *               useMediaCapabilitiesApi: false,
+ *               supportedCodecs: []
  *            },
  *            timeShiftBuffer: {
  *                calcFromSegmentTimeline: false,
@@ -535,6 +536,8 @@ import {HTTPRequest} from '../streaming/vo/metrics/HTTPRequest';
  * Enable to filter all the AdaptationSets and Representations which contain an unsupported \<EssentialProperty\> element.
  * @property {boolean} [useMediaCapabilitiesApi=false]
  * Enable to use the MediaCapabilities API to check whether codecs are supported. If disabled MSE.isTypeSupported will be used instead.
+ * @property {Array.<string>} [supportedCodecs=[]]
+ * List of supported codecs that will not be filtered out.
  */
 
 /**
@@ -763,7 +766,8 @@ function Settings() {
             eventControllerRefreshDelay: 150,
             capabilities: {
                 filterUnsupportedEssentialProperties: true,
-                useMediaCapabilitiesApi: false
+                useMediaCapabilitiesApi: false,
+                supportedCodecs: []
             },
             timeShiftBuffer: {
                 calcFromSegmentTimeline: false,

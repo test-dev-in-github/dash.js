@@ -133,7 +133,7 @@ function CapabilitiesFilter() {
                         }
                         return supported[i];
                     });
-                    resolve();
+                    resolve()
                 })
                 .catch(() => {
                     resolve();

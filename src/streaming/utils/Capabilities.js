@@ -100,11 +100,24 @@ function Capabilities() {
             return Promise.resolve(true);
         }
 
+        if (_isSupportedCodec(config)) {
+            return Promise.resolve(true);
+        }
+
         if (_canUseMediaCapabilitiesApi(config, type)) {
             return _checkCodecWithMediaCapabilities(config, type);
         }
 
         return _checkCodecWithMse(config);
+    }
+
+    /**
+     * Indicates, whether the given codec is whitelisted as a supported codec in the config.
+     * @param {object} config
+     * @returns {boolean}
+     */
+    function _isSupportedCodec(config) {
+        return settings.get().streaming.capabilities.supportedCodecs.indexOf(config.codec) !== -1;
     }
 
     /**
