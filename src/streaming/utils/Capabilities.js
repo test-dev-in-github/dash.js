@@ -117,6 +117,8 @@ function Capabilities() {
      * @returns {boolean}
      */
     function _isSupportedCodec(config) {
+        // Example:
+        // 'video/mp4; codecs="avc1.640029"'
         function formatCodec(codec) {
             return codec.split(' ').join('').toLowerCase();
         }
