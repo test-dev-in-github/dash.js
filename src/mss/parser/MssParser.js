@@ -248,6 +248,13 @@ function MssParser(config) {
             representation.codecs = constants.STPP;
         }
 
+        const { replaceCodecs } = settings.get().streaming.capabilities;
+        for (const [from, to] of replaceCodecs) {
+            if (representation.codecs === from) {
+                representation.codecs = to;
+            }
+          }
+
         representation.codecPrivateData = '' + qualityLevel.getAttribute('CodecPrivateData');
         representation.BaseURL = qualityLevel.BaseURL;
 
