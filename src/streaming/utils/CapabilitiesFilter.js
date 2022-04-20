@@ -127,12 +127,22 @@ function CapabilitiesFilter() {
 
             Promise.all(promises)
                 .then((supported) => {
-                    as.Representation_asArray = as.Representation_asArray.filter((_, i) => {
-                        if (!supported[i]) {
-                            logger.debug(`[Stream] Codec ${configurations[i].codec} not supported `);
-                        }
-                        return supported[i];
-                    });
+                    as.Representation_asArray = as.Representation_asArray
+                        .map((representation) => {
+                            const { replaceCodecs } = settings.get().streaming.capabilities;
+                            for (const [from, to] of replaceCodecs) {
+                                if (representation.codecs === from) {
+                                    representation.codecs = to;
+                                }
+                            }
+                            return representation;
+                        })
+                        .filter((_, i) => {
+                            if (!supported[i]) {
+                                logger.debug(`[Stream] Codec ${configurations[i].codec} not supported `);
+                            }
+                            return supported[i];
+                        });
                     resolve()
                 })
                 .catch(() => {
