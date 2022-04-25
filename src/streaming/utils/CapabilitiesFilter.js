@@ -117,7 +117,15 @@ function CapabilitiesFilter() {
             const promises = [];
             const configurations = [];
 
+            const { replaceCodecs } = settings.get().streaming.capabilities;
+
             as.Representation_asArray.forEach((rep, i) => {
+                for (const [from, to] of replaceCodecs) {
+                    if (rep.codecs?.toLowerCase() === from.toLowerCase()) {
+                        rep.codecs = to;
+                    }
+                }
+
                 const codec = adapter.getCodec(as, i, false);
                 const config = _createConfiguration(type,rep, codec);
 
@@ -128,15 +136,6 @@ function CapabilitiesFilter() {
             Promise.all(promises)
                 .then((supported) => {
                     as.Representation_asArray = as.Representation_asArray
-                        .map((representation) => {
-                            const { replaceCodecs } = settings.get().streaming.capabilities;
-                            for (const [from, to] of replaceCodecs) {
-                                if (representation.codecs === from) {
-                                    representation.codecs = to;
-                                }
-                            }
-                            return representation;
-                        })
                         .filter((_, i) => {
                             if (!supported[i]) {
                                 logger.debug(`[Stream] Codec ${configurations[i].codec} not supported `);
