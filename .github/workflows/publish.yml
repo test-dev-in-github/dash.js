@@ -23,15 +23,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Build package
-        run: npm run build
-
       - name: Read package version
         id: read-package-version
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "::set-output name=package-version::$PACKAGE_VERSION"
       - name: Publish package
-        run: npm publish
+        run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
